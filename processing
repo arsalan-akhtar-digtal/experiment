@@ -1,0 +1,78 @@
+import processing.serial.*; // import the Processing serial library
+Serial myPort;              // The serial port
+int sensor1;
+
+float mappedSensor1;
+
+PImage Gifimg;
+PImage firstimg;
+PImage secondimg;
+
+
+
+PImage Frontimg;  // Declare variable "a" of type PImage
+
+// Declare variable "a" of type PImage
+
+void setup() {
+  size(1920, 1080);
+  // List all the available serial ports in the console
+  printArray(Serial.list());
+   Gifimg = loadImage("second.png");  // Load the image into the program
+   Frontimg = loadImage("Front.png");  // Load the image into the program  
+   secondimg = loadImage("finalsmall.png");  // Load the image into the program  
+
+   
+   
+
+  // Change the 0 to the appropriate number of the serial port
+  // that your microcontroller is attached to.
+  String portName = Serial.list()[0];
+  myPort = new Serial(this, portName, 9600);
+  // read incoming bytes to a buffer
+  // until you get a linefeed (ASCII 10):
+  myPort.bufferUntil('\n');
+}
+
+
+void draw() {
+  background(255);
+
+  if (sensor1 > 0) {
+image(secondimg, 0, 0);
+image(Gifimg, 0, 0);
+
+
+
+} 
+else {
+image(Frontimg, 0, 0);
+
+ 
+
+  }
+
+}
+
+
+void serialEvent(Serial myPort) {
+  // read the serial buffer:
+  String myString = myPort.readStringUntil('\n');
+  if (myString != null) {
+    // println(myString);
+    myString = trim(myString);
+
+    // split the string at the commas
+    // and convert the sections into integers:
+    int sensors[] = int(split(myString, ','));
+    for (int sensorNum = 0; sensorNum < sensors.length; sensorNum++) {
+      print("Sensor " + sensorNum + ": " + sensors[sensorNum] + "\t");
+    }
+    // add a linefeed at the end:
+    println();
+    sensor1 = sensors[0];  
+    
+    mappedSensor1 = map(sensor1, 0, 1023, height, 0);
+   
+  }
+}
